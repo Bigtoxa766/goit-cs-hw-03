@@ -23,7 +23,7 @@ def status_table():
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) UNIQUE NOT NULL
     );
-    '''
+    ''' 
     return create_table_query
 
 def tasks_table():
@@ -35,7 +35,7 @@ def tasks_table():
     status_id INTEGER,
     user_id INTEGER,
     FOREIGN KEY (status_id) REFERENCES status (id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES status (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
     );
     '''
     return create_table_query
@@ -53,6 +53,7 @@ try:
     create_status_table = status_table()
     cursor.execute(create_status_table)
     print("Таблиця 'status' успішно створена.")
+    
     # insert_values_query = '''
     # INSERT INTO status (name) VALUES
     #     ('new'),
@@ -70,8 +71,8 @@ try:
 except Exception as e:
     print(f"Помилка при створенні таблиці: {e}")
 
-finally:
-    if connection:
-        cursor.close()
-        connection.close()
-        print("З'єднання з PostgreSQL закрито.")
+# finally:
+#     if connection:
+#         cursor.close()
+#         connection.close()
+#         print("З'єднання з PostgreSQL закрито.")
