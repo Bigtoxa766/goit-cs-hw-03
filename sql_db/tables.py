@@ -1,5 +1,6 @@
 import psycopg2
 
+# Конфігурація бази даних
 DB_CONFIG = {
 'host': 'localhost',
 'port': 5433,
@@ -7,6 +8,7 @@ DB_CONFIG = {
 'password': 'test',
 'dbname': 'postgres'}
 
+# Функція створення таблиці users
 def user_table():
     create_table_query = '''
     CREATE TABLE IF NOT EXISTS users (
@@ -17,6 +19,7 @@ def user_table():
     '''
     return create_table_query
 
+# Функція створення таблиці status
 def status_table():
     create_table_query = ''' 
     CREATE TABLE IF NOT EXISTS status (
@@ -26,6 +29,7 @@ def status_table():
     ''' 
     return create_table_query
 
+# Функція створення таблиці tasks
 def tasks_table():
     create_table_query = ''' 
     CREATE TABLE IF NOT EXISTS tasks (
@@ -40,38 +44,33 @@ def tasks_table():
     '''
     return create_table_query
 
+# Функція видалення таблиць
 def drop_table_if_exists(table_name):
     return f"DROP TABLE IF EXISTS {table_name} CASCADE;"
 
 try:
+    # Підключення до БД
     connection = psycopg2.connect(**DB_CONFIG)
 
     connection.autocommit = True
     cursor = connection.cursor()
 
+    # Видалення попередніх таблиць 
     cursor.execute(drop_table_if_exists('tasks'))
     cursor.execute(drop_table_if_exists('status'))
     cursor.execute(drop_table_if_exists('users'))
 
-
+    # Створення таблиці users
     create_user_table = user_table()
     cursor.execute(create_user_table)
     print("Таблиця 'users' успішно створена.")
 
+    # Створення таблиці status
     create_status_table = status_table()
     cursor.execute(create_status_table)
     print("Таблиця 'status' успішно створена.")
-    
-    insert_values_query = '''
-    INSERT INTO status (name) VALUES
-        ('new'),
-        ('in progress'),
-        ('completed')
-    ON CONFLICT (name) DO NOTHING;
-    '''
-    cursor.execute(insert_values_query)
-    print("Початкові значення успішно вставлені.")
 
+    # Створення таблиці tasks
     create_tasks_table = tasks_table()
     cursor.execute(create_tasks_table)
     print("Таблиця 'tasks' успішно створена.")

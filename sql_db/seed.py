@@ -3,8 +3,12 @@ from psycopg2 import connect
 import random
 
 from tables import DB_CONFIG
+from requests import DatabaseManager
 
 faker = Faker(locale='uk_UA')
+
+db_manager = DatabaseManager(DB_CONFIG)
+db_manager.connect()
 
 NUM_USERS = 10
 NUM_TASKS = 30
@@ -50,7 +54,7 @@ def seed_db():
         for _ in range(NUM_TASKS):
             status_id = random.choice(status_ids)
             user_id = random.choice(user_ids)
-            print(f"Додається завдання: status_id={status_id}, user_id={user_id}")
+           
             tasks_data.append((
                 faker.sentence(nb_words=4),  
                 faker.text(max_nb_chars=200),  
@@ -73,5 +77,14 @@ def seed_db():
             connection.close()
             print("З'єднання з PostgreSQL закрито.")
 
+
+
 if __name__ == "__main__":
     seed_db()
+
+    [print(task) for task in db_manager.fetch_user_tasks(1)]
+    print("*" * 80)
+
+    
+    db_manager.close()
+    
