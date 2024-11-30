@@ -2,7 +2,7 @@ from faker import Faker
 from psycopg2 import connect
 import random
 
-from users_table import DB_CONFIG
+from tables import DB_CONFIG
 
 faker = Faker(locale='uk_UA')
 
@@ -52,14 +52,15 @@ def seed_db():
             user_id = random.choice(user_ids)
             print(f"Додається завдання: status_id={status_id}, user_id={user_id}")
             tasks_data.append((
-                faker.sentence(nb_words=4),  # title
-                faker.text(max_nb_chars=200),  # description
+                faker.sentence(nb_words=4),  
+                faker.text(max_nb_chars=200),  
                 status_id,
                 user_id
             ))
+        valid_tasks_data = [task for task in tasks_data if task[2] in user_ids]
         cursor.executemany(
             "INSERT INTO tasks (title, description, status_id, user_id) VALUES (%s, %s, %s, %s);",
-            tasks_data
+            valid_tasks_data
         )
         print(f"Таблиця 'tasks' заповнена {NUM_TASKS} записами.")
 

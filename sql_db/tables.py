@@ -34,17 +34,25 @@ def tasks_table():
     description TEXT,
     status_id INTEGER,
     user_id INTEGER,
-    FOREIGN KEY (status_id) REFERENCES status (id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (status_id) REFERENCES status (id) ON DELETE CASCADE
     );
     '''
     return create_table_query
+
+def drop_table_if_exists(table_name):
+    return f"DROP TABLE IF EXISTS {table_name} CASCADE;"
 
 try:
     connection = psycopg2.connect(**DB_CONFIG)
 
     connection.autocommit = True
     cursor = connection.cursor()
+
+    cursor.execute(drop_table_if_exists('tasks'))
+    cursor.execute(drop_table_if_exists('status'))
+    cursor.execute(drop_table_if_exists('users'))
+
 
     create_user_table = user_table()
     cursor.execute(create_user_table)
@@ -54,15 +62,15 @@ try:
     cursor.execute(create_status_table)
     print("Таблиця 'status' успішно створена.")
     
-    # insert_values_query = '''
-    # INSERT INTO status (name) VALUES
-    #     ('new'),
-    #     ('in progress'),
-    #     ('completed')
-    # ON CONFLICT (name) DO NOTHING;
-    # '''
-    # cursor.execute(insert_values_query)
-    # print("Початкові значення успішно вставлені.")
+    insert_values_query = '''
+    INSERT INTO status (name) VALUES
+        ('new'),
+        ('in progress'),
+        ('completed')
+    ON CONFLICT (name) DO NOTHING;
+    '''
+    cursor.execute(insert_values_query)
+    print("Початкові значення успішно вставлені.")
 
     create_tasks_table = tasks_table()
     cursor.execute(create_tasks_table)
@@ -71,8 +79,8 @@ try:
 except Exception as e:
     print(f"Помилка при створенні таблиці: {e}")
 
-# finally:
-#     if connection:
-#         cursor.close()
-#         connection.close()
-#         print("З'єднання з PostgreSQL закрито.")
+finally:
+    if connection:
+        cursor.close()
+        connection.close()
+        print("З'єднання з PostgreSQL закрито.")
