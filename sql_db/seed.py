@@ -114,5 +114,22 @@ if __name__ == "__main__":
     print(db_manager.find_users_by_email('%example.com'))
     print("*" * 80)
 
+    print(db_manager.update_user_name(1, 'Джеймс Хетфілд'))
+    print("*" * 80)
+
+    print(db_manager.count_tasks_by_status())
+    print("*" * 80)
+
+    [print(task) for task in db_manager.fetch_tasks_by_email_domain("example.net")]
+    print("*" * 80)
+
+    [print(task) for task in db_manager.fetch_tasks_without_description()]
+    print("*" * 80)
+
+    [print(item) for item in db_manager.fetch_users_and_tasks_in_progress()]
+    print("*" * 80)
+
+    [print(item) for item in db_manager.fetch_users_and_task_counts()]
+
     db_manager.close()
     
